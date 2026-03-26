@@ -1,3 +1,4 @@
+from fastapi.params import Depends
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from datetime import datetime
 
@@ -11,14 +12,12 @@ class Note(SQLModel, table=True):
 # Postgres configs
 postgres_url = "postgresql://jack@localhost/silo"
 
-connect_args = {"check_same_thread": False}
-engine = create_engine(postgres_url, connect_args=connect_args)
+engine = create_engine(postgres_url)
 
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
-
-def get_session():
+def get_session(): # sqlmodel boilerplate to pass of the session parameter to FastAPI
     with Session(engine) as session:
         yield session

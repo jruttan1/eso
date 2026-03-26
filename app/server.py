@@ -1,32 +1,24 @@
-from fastapi import FastAPI, BaseModel
-from db import Note
+from fastapi import FastAPI, HTTPException, Depends
+import crud
+import db
 
 app = FastAPI()
 
-notes = Note()
-
-@app.post('/notes')
-def add_Note(note: Note) -> Note:
-    new_note = Note(id = len(notes) + 1, content = note.content)
-    notes.append(new_note)
-    return new_note
-
 @app.get('/notes')
-def get_all_notes():
+def get_all_notes(session = Depends(db.get_session)): # Depends keyword from fastapi automatically opens and closes the postgres session
+    notes = crud.get_all_notes(session) # uses crud functions from db
     return notes
 
 @app.get('/notes/{id}')
-def get_Note_from_id(id: int):
-    for Note in notes:
-        if Note.id == id:
-            return Note
-    return {"Error, Not Found"}, 404
+def get_note_from_id(id: int, session = Depends(db.get_session)):
+    note = crud.get_note_from_id(id, session)
+    if note is not None:
+        return note
+    else:
+        raise HTTPException(status_code=404, detail="Note not found in DB")
 
-@app.post('/note/{id}')
-def update_content(content: str, id: int):
-    for note in notes:
-        if note.id == id:
-            note.content = content
-            return {"Success:" "Updated Content for Note"}, 200
-        
-    return {"Failed to Update"}, 404
+
+@app.post('/note')
+def update_content(content: str, session = Depends(db.get_session)):
+    note = crud.write_note(content, session)
+    return note
