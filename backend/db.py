@@ -2,6 +2,8 @@ from sqlmodel import Field, SQLModel, Session, create_engine
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import Column
 
 class Note(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -9,6 +11,7 @@ class Note(SQLModel, table=True):
     created_at: datetime = Field(default_factory = datetime.now) # use .now not .now() cause we wanna call the function each time an object of this class is created
     updated_at: datetime = Field(default_factory = datetime.now)
     content: str # The actual content of the note
+    embedding: list | None = Field(sa_column = Column(Vector(1536), nullable = True))
 
 # Indexing is a way to optimize database queries. When you create an index on a column, 
 # the database creates a data structure that allows it to quickly locate rows based on 
