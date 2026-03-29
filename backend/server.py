@@ -44,7 +44,7 @@ async def delete_note(id: int, session = Depends(db.get_session)):
     else:
         raise HTTPException(status_code=404, detail="Note not found in DB")
 
-@app.put('/update_note/{id}', response_model = NoteCreate)
+@app.put('/update_note/{id}', response_model = NoteResponse)
 async def update_note(id: int, note: NoteCreate, session = Depends(db.get_session)):
     note = crud.update_note(id, note, session)
     if note is not None:
