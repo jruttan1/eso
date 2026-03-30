@@ -4,7 +4,7 @@ import os
 from embedding import create_embedding, get_k_nearest_neighbours
 from schemas import NoteCreate, NoteResponse
 from sqlmodel import Session
-from db import engine
+from db import engine, Edge
 from crud import get_note_from_id
 
 load_dotenv()
@@ -23,6 +23,8 @@ def embed_note(id: int) -> NoteResponse:
         session.add(note)
         session.commit()
         session.refresh(note)
+
+        find_similar.delay(id)
     
         return note
     
@@ -33,6 +35,20 @@ def find_similar(id: int):
         note = get_note_from_id(id, session)
         similar = get_k_nearest_neighbours(note, session) # pass k if you want more or less than 5 similar
 
-        # add logic for saving edges between nodes later
-
+        connect_similar.delay(id, similar)
         return similar
+    
+
+@app.task
+def connect_similar(id: int, similar_notes):
+    with Session(engine) as session:
+
+        for note in similar_notes:
+            similar_note, distance = note
+            edge = Edge(from_note_id = id, to_note_id = similar_note.id, distance = distance)
+            session.add(edge)
+            session.commit()
+            session.refresh(edge)
+
+        return edge
+    

@@ -1,10 +1,10 @@
-from sqlmodel import Field, SQLModel, Session, create_engine
+from sqlmodel import Field, SQLModel, Session, create_engine, Relationship
 from datetime import datetime
 import os
 from dotenv import load_dotenv
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column
-
+from typing import List, Optional
 class Note(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(index=True) # Field means this is a column in the database
@@ -13,10 +13,11 @@ class Note(SQLModel, table=True):
     content: str # The actual content of the note
     embedding: list | None = Field(sa_column = Column(Vector(1536), nullable = True))
 
-# Indexing is a way to optimize database queries. When you create an index on a column, 
-# the database creates a data structure that allows it to quickly locate rows based on 
-# the values in that column. This speeds up query performance, especially for large datasets.
-# for this db we likely dont need any indexing but i'll do it for title just to experiment
+
+class Edge(SQLModel, table=True):
+    from_note_id: int | None = Field(default = None, foreign_key = "note.id", primary_key = True)
+    to_note_id: int | None = Field(default = None, foreign_key = "note.id", primary_key = True)
+    distance: float | None # cosine distance between 2 notes
 
 # Postgres configs
 load_dotenv()
