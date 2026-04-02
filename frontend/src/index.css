@@ -37,7 +37,6 @@ body {
   padding-top: 150px;
   padding-bottom: 24px;
   max-width: 700px;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -97,6 +96,7 @@ body {
   border-radius: 999px;
   background: rgba(250, 248, 247, 0.92);
   box-sizing: border-box;
+  z-index: 10;
 }
 
 .themeToggleButton {
@@ -110,6 +110,7 @@ body {
   color: var(--text-body);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+  z-index: 10;
 }
 
 .themeToggleButton:hover {
@@ -165,8 +166,9 @@ a {
 
 .tree{
   position: fixed;
-  right: 40px;
-  bottom: 0px;
-  width: 220px;
-  transform: rotate(12deg);
+  right: -280px;
+  bottom: -140px;
+  width: 1000px;
+  transform: rotate(8deg);
+  transform-origin: bottom right;
 }

@@ -4,6 +4,7 @@ import tree from '../assets/tree.svg'
 
 function Hero({ theme, setTheme }) {
     return (
+        <>
         <div className = 'hero'>
             <div className = 'heroContent'>
                 <div className = 'title'>
@@ -23,8 +24,9 @@ function Hero({ theme, setTheme }) {
                 built by jack ruttan
             </div>
             <ThemeToggle theme={theme} setTheme={setTheme}/>
-            <img className="tree" src={tree} alt=""/>
         </div>
+        <img className="tree" src={tree} alt=""/>
+        </>
     )
 }
 
