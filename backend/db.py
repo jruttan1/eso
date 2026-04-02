@@ -21,7 +21,7 @@ class Edge(SQLModel, table=True):
 
 
 class Cluster(SQLModel, table=True):
-    id: int | None = Field(default=True, primary_key = True)
+    id: int | None = Field(default=None, primary_key = True)
     cluster_name: str | None
 
 class NoteCluster(SQLModel, table=True): # junction table to represent the many-many relationship
