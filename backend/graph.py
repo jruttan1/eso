@@ -16,13 +16,14 @@ def create_graph():
         clusters = nx.louvain_communities(G, weight = 'similarity',  resolution=1) # resolution: less than 1 = larger communities, greater than 1 = smaller communities
 
         for group in clusters: # group here is a group of similar ids that makeup a cluster respresented as a set
-            cluster = Cluster() 
+            cluster = Cluster() # just create 1 cluster per cluster in the db with no data so we can use the id
             session.add(cluster)
             session.commit()
             session.refresh(cluster)
 
 
-            for j in group: # loop through each id in hte cluster
-                cluster_record = NoteCluster(note_id = j, cluster_id = cluster.id)
+            for note_id in group: # loop through each id in the cluster
+                cluster_record = NoteCluster(note_id = note_id, cluster_id = cluster.id)
                 session.add(cluster_record)
-                session.commit()
+            
+            session.commit()
